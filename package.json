@@ -16,5 +16,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/c-louis/leekwars-api-automation.git"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
   }
 }

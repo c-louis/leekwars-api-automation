@@ -29,7 +29,6 @@ async function login(login, password) {
 
 		return true;
 	}).catch((err) => {
-		console.log(err);
 		return false;
 	});
 	return data;
@@ -52,7 +51,7 @@ async function farmerOpponents() {
 	).then((res) => {
 		return res.data;
 	}).catch((err) => {
-		console.log(err);
+		console.log(err.data);
 	});
 	return data;
 }
@@ -69,7 +68,7 @@ async function leekFight(leek_id, target_id) {
 	).then((res) => {
 		return res.data;
 	}).catch((err) => {
-		console.log(err);
+		console.log(err.data);
 	});
 	return data;
 }
@@ -80,7 +79,7 @@ async function farmerFight(target_id) {
 	).then((res) => {
 		return res.data;
 	}).catch((err) => {
-		console.log(err);
+		console.log(err.data);
 	});
 	return data;
 }
@@ -98,7 +97,7 @@ async function leekChallenge(leek_id, target_id) {
 	).then((res) => {
 		return res.data;
 	}).catch((err) => {
-		console.log(err);
+		console.log(err.data);
 	});
 	return data;
 }
@@ -110,7 +109,7 @@ async function farmerChallenge(target_id) {
 	).then((res) => {
 		return res.data;
 	}).catch((err) => {
-		console.log(err);
+		console.log(err.data);
 	});
 	return data;
 }
