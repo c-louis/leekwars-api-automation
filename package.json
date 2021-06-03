@@ -1,0 +1,20 @@
+{
+  "name": "@c-louis/leekwars-api-automation",
+  "version": "1.0.0",
+  "description": "tool to automate some action for leekwars",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "author": "c-louis",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "chai": "^4.3.4",
+    "mocha": "^8.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c-louis/leekwars-api-automation.git"
+  }
+}
