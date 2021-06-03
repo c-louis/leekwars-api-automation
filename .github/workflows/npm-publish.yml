@@ -3,7 +3,8 @@
 
 name: Node.js Package
 
-on:
+on: 
+  workflow_dispatch:
   release:
     types: [created]
 
@@ -16,10 +17,11 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm $LEEK_LOGIN $LEEK_PASSWORD test
+      - run: npm run test
         env:
-          LEEK_LOGIN=${{ secrets.LEEK_LOGIN }}
-          LEEK_PASSWORD=${{ secrets.LEEK_PASSWORD }}
+          npm_config_leek_login: ${{secrets.LEEK_LOGIN}}
+          npm_config_leek_password: ${{secrets.LEEK_PASSWORD}}
+      
   publish-gpr:
     needs: build
     runs-on: ubuntu-latest
