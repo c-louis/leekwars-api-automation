@@ -4,7 +4,6 @@ const leekapi 		= require('../app/index');
 
 describe("Login test", function() {
 	this.timeout(10000);
-	console.log(process.env);
 	var leek_login = process.env.npm_config_leek_login;
 	var leek_password = process.env.npm_config_leek_password;
 
