@@ -29,6 +29,7 @@ async function login(login, password) {
 
 		return true;
 	}).catch((err) => {
+		console.log(err);
 		return false;
 	});
 	return data;
