@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    environment: build_env
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,7 +16,10 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm ${{ secrets.LEEK_LOGIN }} ${{ secrets.LEEK_PASSWORD }} test
+      - run: npm $LEEK_LOGIN $LEEK_PASSWORD test
+        env:
+          LEEK_LOGIN=${{ secrets.LEEK_LOGIN }}
+          LEEK_PASSWORD=${{ secrets.LEEK_PASSWORD }}
   publish-gpr:
     needs: build
     runs-on: ubuntu-latest
