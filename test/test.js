@@ -1,6 +1,6 @@
 const expect    	= require("chai").expect;
 const { assert } 	= require('chai');
-const leekapi 		= require('../app/index');
+const leekapi 		= require('../index');
 
 describe("Login test", function() {
 	this.timeout(10000);

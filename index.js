@@ -34,6 +34,26 @@ async function login(login, password) {
 	return data;
 }
 
+function storeToken() {
+	localStorage.setItem('token', token);
+}
+
+async function loginWithToken() {
+	token = localStorage.getItem('token', token);
+	instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+	instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
+
+	let result = instance.get('/farmer/get-from-token').then((response) => {
+		login = result.data['farmer']['login'];
+		leekcounts = result.data['farmer']['leek_count'];
+		leeks = result.data['farmer']['leeks'];
+	}).catch((err) => {
+		return err;
+	});
+	return result;
+}
+
+
 async function leekOpponents(leek_id) {
 	let data = instance.get(
 		`/garden/get-leek-opponents/${leek_id}`,
@@ -122,6 +142,8 @@ function getLeeks() {
 //garden/get-leek-opponents/leek_id → opponents -> leek fight
 
 exports.login = login;
+exports.storeToken = storeToken;
+exports.loginWithToken = loginWithToken;
 exports.getLeeks = getLeeks;
 exports.leekOpponents = leekOpponents;
 exports.farmerOpponents = farmerOpponents;
