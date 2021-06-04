@@ -80,6 +80,33 @@ describe("Fight", function() {
 	});	
 });
 
+describe("With Middle Api Fight", function() {
+	this.timeout(20000);
+	it("leek fight", async function() {
+		var leeks = leekapi.getLeeks();
+		let leekId = Object.keys(leeks)[0];
+		var opponents = await leekapi.leekOpponents(leekId);
+		let opponentId = opponents['opponents'][0]['id'];
+
+		return leekapi.leekFight(leekId, opponentId, true).then((res) => {
+			assert.isDefined(res['fight']);
+		}).catch((err) => {
+			console.log(err);
+		});
+		
+	});
+	it("farmer fight", async function() {
+		var opponents = await leekapi.farmerOpponents();
+		let opponentId = opponents['opponents'][0]['id'];
+
+		return leekapi.farmerFight(opponentId, true).then((res) => {
+			assert.isDefined(res['fight']);
+		}).catch((err) => {
+			console.log(err);
+		});
+	});	
+});
+
 describe("Challenge", function() {
 	this.timeout(20000);
 	it("leek fight", async function() {

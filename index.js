@@ -1,4 +1,6 @@
 const baseURL = 'https://leekwars.com/api'
+const middleURL = 'http://leekwarsapimiddle.eba-fypezsnv.eu-west-1.elasticbeanstalk.com/api.php'
+
 const axios = require('axios');
 var instance = axios.create({
 	baseURL: 'https://leekwars.com/api',
@@ -76,32 +78,54 @@ async function farmerOpponents() {
 	return data;
 }
 
-async function leekFight(leek_id, target_id) {
+async function leekFight(leek_id, target_id, with_middle=false) {
 	if (typeof leek_id == 'string') {
 		leek_id = parseInt(leek_id);
 	}
 	if (typeof target_id == 'string') {
 		target_id = parseInt(target_id);
 	}
-	let data = instance.get(
-		`/garden/start-solo-fight/${leek_id}/${target_id}`,
-	).then((res) => {
-		return res.data;
-	}).catch((err) => {
-		console.log(err.data);
-	});
-	return data;
+	if (with_middle) {
+		let data = axios.get(
+			`${middleURL}?type=fightLeek&farmer&token=${token}&leek_id=${leek_id}&target_id=${target_id}`
+		).then((res) => {
+			return res.data;
+		}).catch((err) => {
+			console.log(err);
+		});
+		return data;
+	} else {
+		let data = instance.get(
+			`/garden/start-solo-fight/${leek_id}/${target_id}`,
+		).then((res) => {
+			return res.data;
+		}).catch((err) => {
+			console.log(err.data);
+		});
+		return data;
+	}
 }
 
-async function farmerFight(target_id) {
-	let data = instance.get(
-		`/garden/start-farmer-fight/${target_id}`,
-	).then((res) => {
-		return res.data;
-	}).catch((err) => {
-		console.log(err.data);
-	});
-	return data;
+async function farmerFight(target_id, with_middle=false) {
+	if (with_middle) {
+		let data = axios.get(
+			`${middleURL}?type=fightFarmer&token=${token}&target_id=${target_id}`
+		).then((res) => {
+			return res.data;
+		}).catch((err) => {
+			console.log(err);
+		});
+		return data;
+	} else {
+		let data = instance.get(
+			`/garden/start-farmer-fight/${target_id}`,
+		).then((res) => {
+			return res.data;
+		}).catch((err) => {
+			console.log(err.data);
+		});
+		return data;
+	}
 }
 
 async function leekChallenge(leek_id, target_id) {

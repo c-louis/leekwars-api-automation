@@ -1,10 +1,11 @@
 {
   "name": "@c-louis/leekwars-api-automation",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "tool to automate some action for leekwars",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "fakepub": "npm publish --dry-run"
   },
   "author": "c-louis",
   "license": "GPL-3.0-or-later",
