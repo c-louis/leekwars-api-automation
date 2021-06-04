@@ -1,6 +1,6 @@
 {
   "name": "@c-louis/leekwars-api-automation",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "tool to automate some action for leekwars",
   "main": "build/index.js",
   "scripts": {

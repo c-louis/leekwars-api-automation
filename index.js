@@ -46,9 +46,11 @@ async function loginWithToken() {
 	instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
 
 	let result = instance.get('/farmer/get-from-token').then((response) => {
-		login = result.data['farmer']['login'];
-		leekcounts = result.data['farmer']['leek_count'];
-		leeks = result.data['farmer']['leeks'];
+		login = response.data['farmer']['login'];
+		leekcounts = response.data['farmer']['leek_count'];
+		leeks = response.data['farmer']['leeks'];
+
+		return response.data;
 	}).catch((err) => {
 		return err;
 	});
