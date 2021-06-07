@@ -187,7 +187,7 @@ function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function leekBatchFights(leek_id, batchsize, with_middle=false, fast=false) {
+async function leekBatchFights(leek_id, batchsize, with_middle=false, fast=false, callback=console.log) {
 	var fights = [];
 	var last_fight;
 	let idx = 0;
@@ -200,14 +200,17 @@ async function leekBatchFights(leek_id, batchsize, with_middle=false, fast=false
 		let fight = await leekFight(leek_id, opponents[idx++].id, with_middle);
 		fights.push(fight['fight']);
 		if (fast || fight['fight'] === undefined) {
+			if (fight['fight'] != undefined) {
+				callback(await getFight(fight['fight']));
+			}
 			continue;
 		}
-		await getFightResult(fight['fight']);
+		callback(await getFightResult(fight['fight']));
 	}
 	return fights;
 }
 
-async function farmerBatchFights(batchsize, with_middle=false, fast=false) {
+async function farmerBatchFights(batchsize, with_middle=false, fast=false, callback=console.log) {
 	var fights = [];
 	var last_fight;
 	let idx = 0;
@@ -220,9 +223,12 @@ async function farmerBatchFights(batchsize, with_middle=false, fast=false) {
 		let fight = await farmerFight(opponents[idx++].id, with_middle);
 		fights.push(fight['fight']);
 		if (fast || fight['fight'] === undefined) {
+			if (fight['fight'] != undefined) {
+				callback(await getFight(fight['fight']));
+			}
 			continue;
 		}
-		await getFightResult(fight['fight']);
+		callback(await getFightResult(fight['fight']));
 	}
 	return fights;
 }
