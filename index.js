@@ -1,5 +1,5 @@
 const baseURL = 'https://leekwars.com/api'
-const middleURL = 'http://leekwarsapimiddle.eba-fypezsnv.eu-west-1.elasticbeanstalk.com/api.php'
+const middleURL = 'https://leekwarsmiddleapi.cl-dev.ovh/api.php'
 
 const phpsession = "abcd232ef";
 const axios = require('axios');
