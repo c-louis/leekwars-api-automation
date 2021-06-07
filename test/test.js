@@ -1,9 +1,10 @@
 const expect    	= require("chai").expect;
 const { assert } 	= require('chai');
 const leekapi 		= require('../index');
+var fights			= [];
 
 describe("Login test", function() {
-	this.timeout(10000);
+	this.timeout(60000);
 	var leek_login = process.env.npm_config_leek_login;
 	var leek_password = process.env.npm_config_leek_password;
 
@@ -34,7 +35,7 @@ describe("Leeks list", function() {
 });
 
 describe("Opponent", function() {
-	this.timeout(20000);
+	this.timeout(60000);
 	it("leek opponents", async function() {
 		var leeks = leekapi.getLeeks();
 		let leekId = Object.keys(leeks)[0];
@@ -54,7 +55,7 @@ describe("Opponent", function() {
 });
 
 describe("Fight", function() {
-	this.timeout(20000);
+	this.timeout(60000);
 	it("leek fight", async function() {
 		var leeks = leekapi.getLeeks();
 		let leekId = Object.keys(leeks)[0];
@@ -63,6 +64,7 @@ describe("Fight", function() {
 
 		return leekapi.leekFight(leekId, opponentId).then((res) => {
 			assert.isDefined(res['fight']);
+			fights.push(res['fight']);
 		}).catch((err) => {
 			console.log(err);
 		});
@@ -74,6 +76,7 @@ describe("Fight", function() {
 
 		return leekapi.farmerFight(opponentId).then((res) => {
 			assert.isDefined(res['fight']);
+			fights.push(res['fight']);
 		}).catch((err) => {
 			console.log(err);
 		});
@@ -81,7 +84,7 @@ describe("Fight", function() {
 });
 
 describe("With Middle Api Fight", function() {
-	this.timeout(20000);
+	this.timeout(60000);
 	it("leek fight", async function() {
 		var leeks = leekapi.getLeeks();
 		let leekId = Object.keys(leeks)[0];
@@ -90,6 +93,7 @@ describe("With Middle Api Fight", function() {
 
 		return leekapi.leekFight(leekId, opponentId, true).then((res) => {
 			assert.isDefined(res['fight']);
+			fights.push(res['fight']);
 		}).catch((err) => {
 			console.log(err);
 		});
@@ -101,6 +105,7 @@ describe("With Middle Api Fight", function() {
 
 		return leekapi.farmerFight(opponentId, true).then((res) => {
 			assert.isDefined(res['fight']);
+			fights.push(res['fight']);
 		}).catch((err) => {
 			console.log(err);
 		});
@@ -108,7 +113,7 @@ describe("With Middle Api Fight", function() {
 });
 
 describe("Challenge", function() {
-	this.timeout(20000);
+	this.timeout(60000);
 	it("leek fight", async function() {
 		var leeks = leekapi.getLeeks();
 		let leekId = Object.keys(leeks)[0];
@@ -134,6 +139,58 @@ describe("Challenge", function() {
 	});	
 });
 
+describe("Getting Fights", function() {
+	this.timeout(60000);
+	it("get fights", async function() {
+		for (var fight of fights) {
+			let data = leekapi.getFight(fight).then((res) => {
+				assert.isDefined(res['id']);
+				assert.isDefined(res['date']);
+			}).catch((err) => {
+				console.log(err);
+			});
+			await data;
+		}
+	});
+});
 
-//testLogin();
+describe("Getting Fights Results", function() {
+	this.timeout(120000);
+	it("get fights", async function() {
+		var opponents = await leekapi.farmerOpponents();
+		let opponentId = opponents['opponents'][0]['id'];
 
+		let fight = await leekapi.farmerFight(opponentId);
+		let data = leekapi.getFightResult(fight['fight']).then((res) => {
+			assert.isDefined(res['report']);
+			expect(res['report']).not.equal(null);
+		}).catch((err) => {
+			console.log(err);
+		});
+		await data;
+	});
+});
+
+describe("Batch Fights", function() {
+	this.timeout(60000);
+	it("leek fights fast", async function() {
+		var leeks = leekapi.getLeeks();
+		let leekId = Object.keys(leeks)[0];
+		
+		return leekapi.leekBatchFights(leekId, 5, false, true).then((res) => {
+			expect(res.length).to.equal(5);
+			fights.push(res['fight']);
+		}).catch((err) => {
+			console.log(err);
+		});
+		
+	});
+	it("farmer fights fast", async function() {
+		return leekapi.farmerBatchFights(5, false, true).then((res) => {
+			expect(res.length).to.equal(5);
+			fights.push(res['fight']);
+		}).catch((err) => {
+			console.log(err);
+		});
+	});
+});

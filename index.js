@@ -1,21 +1,17 @@
 const baseURL = 'https://leekwars.com/api'
 const middleURL = 'http://leekwarsapimiddle.eba-fypezsnv.eu-west-1.elasticbeanstalk.com/api.php'
 
+const phpsession = "abcd232ef";
 const axios = require('axios');
 var instance = axios.create({
 	baseURL: 'https://leekwars.com/api',
 	timeout: 20000,
 });
 
-var phpsession = Math.floor(Math.random() * 10000) + 1;
 var token;
 var login;
 var leekcounts;
 var leeks = [];
-
-const init = () => {
-
-}
 
 async function login(login, password) {
 	let data = axios.get(
@@ -27,8 +23,9 @@ async function login(login, password) {
 		leeks = result.data['farmer']['leeks'];
 
 		instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-		instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
-
+		if (typeof window === 'undefined') {
+			instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
+		}
 		return true;
 	}).catch((err) => {
 		return false;
@@ -43,7 +40,9 @@ function storeToken() {
 async function loginWithToken() {
 	token = localStorage.getItem('token', token);
 	instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-	instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
+	if (typeof window === 'undefined') {
+		instance.defaults.headers.common['Cookie'] = `PHPSESSID=${phpsession}`;
+	}
 
 	let result = instance.get('/farmer/get-from-token').then((response) => {
 		login = response.data['farmer']['login'];
@@ -164,8 +163,71 @@ function getLeeks() {
 	return leeks;
 }
 
-//garden/get-farmer-opponents → opponents -> Team fight
-//garden/get-leek-opponents/leek_id → opponents -> leek fight
+async function getFight(fight_id) {
+	let data = instance.get(
+		`/fight/get/${fight_id}`,
+	).then((res) => {
+		return res.data;
+	}).catch((err) => {
+		console.log(err);
+	});
+	return data;
+}
+
+async function getFightResult(fight_id) {
+	let f = await getFight(fight_id);
+	while (f['report'] == null) {
+		sleep(1000);
+		f = await getFight(fight_id);
+	}
+	return f;
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function leekBatchFights(leek_id, batchsize, with_middle=false, fast=false) {
+	var fights = [];
+	var last_fight;
+	let idx = 0;
+	for (let i = 0; i < batchsize; i++) {
+		if (idx == 4) {
+			idx = 0;
+		}
+		let tmp = await leekOpponents(leek_id);
+		opponents = tmp['opponents'];
+		let fight = await leekFight(leek_id, opponents[idx++].id, with_middle);
+		fights.push(fight['fight']);
+		if (fast || fight['fight'] === undefined) {
+			continue;
+		}
+		await getFightResult(fight['fight']);
+	}
+	return fights;
+}
+
+async function farmerBatchFights(batchsize, with_middle=false, fast=false) {
+	var fights = [];
+	var last_fight;
+	let idx = 0;
+	for (let i = 0; i < batchsize; i++) {
+		if (idx == 4) {
+			idx = 0;
+		}
+		let tmp = await farmerOpponents();
+		opponents = tmp['opponents'];
+		let fight = await farmerFight(opponents[idx++].id, with_middle);
+		fights.push(fight['fight']);
+		if (fast || fight['fight'] === undefined) {
+			continue;
+		}
+		await getFightResult(fight['fight']);
+	}
+	return fights;
+}
+
+
 
 exports.login = login;
 exports.storeToken = storeToken;
@@ -177,3 +239,7 @@ exports.leekFight = leekFight;
 exports.farmerFight = farmerFight;
 exports.leekChallenge = leekChallenge;
 exports.farmerChallenge = farmerChallenge;
+exports.getFight = getFight;
+exports.getFightResult = getFightResult;
+exports.leekBatchFights = leekBatchFights;
+exports.farmerBatchFights = farmerBatchFights;
